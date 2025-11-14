@@ -218,6 +218,24 @@ GO
 /*** fim inserts ***/
 
 
+/*** Procedures ***/
+
+CREATE OR ALTER PROCEDURE dbo.sp_ObterProdutos
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        COD_PRODUTO,
+        DES_PRODUTO,
+        STA_STATUS
+    FROM dbo.PRODUTO
+    ORDER BY COD_PRODUTO;
+END;
+GO
+
+
+/*** fim procedures ***/
 
 
 
