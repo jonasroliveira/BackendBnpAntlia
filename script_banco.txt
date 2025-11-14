@@ -177,9 +177,9 @@ EXEC sp_addextendedproperty
 	@level2type = N'Column', @level2name = 'COD_USUARIO';
 GO
 
-/*** Fim tables ***/
+/*** Fim Tables ***/
 
-/*** inserts ***/
+/*** Inserts ***/
 
 INSERT INTO dbo.PRODUTO (COD_PRODUTO, DES_PRODUTO, STA_STATUS)
 VALUES
@@ -215,7 +215,7 @@ VALUES
 GO
 
 
-/*** fim inserts ***/
+/*** fim Inserts ***/
 
 
 /*** Procedures ***/
@@ -235,7 +235,22 @@ END;
 GO
 
 
-/*** fim procedures ***/
+CREATE OR ALTER PROCEDURE dbo.sp_ObterCosifs
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        COD_PRODUTO,
+        COD_COSIF,
+		COD_CLASSIFICACAO,
+        STA_STATUS
+    FROM dbo.PRODUTO_COSIF
+    ORDER BY COD_COSIF;
+END;
+GO
+
+/*** fim Procedures ***/
 
 
 

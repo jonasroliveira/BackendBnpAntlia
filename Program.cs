@@ -11,6 +11,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IProdutoCosifRepository, ProdutoCosifRepository>();
+builder.Services.AddScoped<IProdutoCosifService, ProdutoCosifService>();
 
 var app = builder.Build();
 
