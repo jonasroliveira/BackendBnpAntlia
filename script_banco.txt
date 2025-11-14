@@ -250,6 +250,31 @@ BEGIN
 END;
 GO
 
+CREATE OR ALTER PROCEDURE dbo.sp_ObterMovimentos
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        MM.DAT_MES AS Mes,
+        MM.DAT_ANO AS Ano,
+        P.COD_PRODUTO AS CodigoProduto,
+        P.DES_PRODUTO AS DescricaoProduto,
+        MM.NUM_LANCAMENTO AS NumeroLancamento,
+        MM.DES_DESCRICAO AS Descricao,
+        MM.VAL_VALOR AS Valor
+    FROM dbo.MOVIMENTO_MANUAL MM
+    INNER JOIN dbo.PRODUTO P 
+        ON P.COD_PRODUTO = MM.COD_PRODUTO
+    ORDER BY 
+        MM.DAT_MES,
+        MM.DAT_ANO,
+        MM.NUM_LANCAMENTO;
+END;
+GO
+
+
+
 /*** fim Procedures ***/
 
 
