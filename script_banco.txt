@@ -1,0 +1,334 @@
+/*** banco ***/
+
+CREATE DATABASE MovimentosManuais
+
+/*** fim banco ***/
+
+
+/*** Tables ***/
+
+USE [MovimentosManuais]
+GO
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[PRODUTO](
+	[COD_PRODUTO] [char](4) NOT NULL,
+	[DES_PRODUTO] [varchar](30) NULL,
+	[STA_STATUS] [char](1) NULL,
+ CONSTRAINT [PK_PRODUTO] PRIMARY KEY CLUSTERED 
+(
+	[COD_PRODUTO] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Código do produto' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PRODUTO'
+GO
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Código do produto', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'PRODUTO',
+	@level2type = N'Column', @level2name = 'COD_PRODUTO';
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Descrição do Produto', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'PRODUTO',
+	@level2type = N'Column', @level2name = 'DES_PRODUTO';
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Status do registro: (A) Ativo (I) Inativo', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'PRODUTO',
+	@level2type = N'Column', @level2name = 'STA_STATUS';
+
+GO
+
+CREATE TABLE [dbo].[PRODUTO_COSIF] (
+    [COD_PRODUTO]        CHAR(4) NOT NULL,     -- Código do produto (FK para PRODUTO)
+    [COD_COSIF]          CHAR(11) NOT NULL,    -- Código COSIF (chave primária composta)
+    [COD_CLASSIFICACAO]  CHAR(6) NULL,         -- Código de classificação do produto COSIF
+    [STA_STATUS]         CHAR(1) NULL,         -- Status do COSIF (A = ativo, I = inativo)
+    CONSTRAINT [PK_PRODUTO_COSIF] PRIMARY KEY ([COD_PRODUTO], [COD_COSIF]),
+    CONSTRAINT [FK_PRODUTO_COSIF_PRODUTO] FOREIGN KEY ([COD_PRODUTO])
+        REFERENCES [dbo].[PRODUTO] ([COD_PRODUTO])
+);
+GO
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Código do produto', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'PRODUTO_COSIF',
+	@level2type = N'Column', @level2name = 'COD_PRODUTO';
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Código COSIF Analítico', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'PRODUTO_COSIF',
+	@level2type = N'Column', @level2name = 'COD_COSIF';
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Classificação da conta COSIF: Normal MTM', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'PRODUTO_COSIF',
+	@level2type = N'Column', @level2name = 'COD_CLASSIFICACAO';
+
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Status do registro: (A) Ativo (I) Inativo', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'PRODUTO_COSIF',
+	@level2type = N'Column', @level2name = 'STA_STATUS';
+
+GO
+
+CREATE TABLE [dbo].[MOVIMENTO_MANUAL] (
+    [DAT_MES]         NUMERIC(2, 0) NOT NULL,
+    [DAT_ANO]         NUMERIC(4, 0) NOT NULL,
+    [NUM_LANCAMENTO]  NUMERIC(18, 0) NOT NULL,
+    [COD_PRODUTO]     CHAR(4) NOT NULL,
+    [COD_COSIF]       CHAR(11) NOT NULL,
+    [DES_DESCRICAO]   VARCHAR(50) NOT NULL,
+    [DAT_MOVIMENTO]   SMALLDATETIME NOT NULL,
+    [COD_USUARIO]     VARCHAR(15) NOT NULL,
+    [VAL_VALOR]       NUMERIC(18, 2) NOT NULL,
+
+    CONSTRAINT [PK_MOVIMENTO_MANUAL] PRIMARY KEY ([DAT_MES], [DAT_ANO], [NUM_LANCAMENTO], [COD_PRODUTO], [COD_COSIF]),
+    CONSTRAINT [FK_MOVIMENTO_MANUAL_PRODUTO_COSIF] FOREIGN KEY ([COD_PRODUTO], [COD_COSIF])
+        REFERENCES [dbo].[PRODUTO_COSIF] ([COD_PRODUTO], [COD_COSIF])
+);
+GO
+
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Mês do movimento', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'MOVIMENTO_MANUAL',
+	@level2type = N'Column', @level2name = 'DAT_MES';
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Ano do movimento', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'MOVIMENTO_MANUAL',
+	@level2type = N'Column', @level2name = 'DAT_ANO';
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Número do lançamento no mês e ano', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'MOVIMENTO_MANUAL',
+	@level2type = N'Column', @level2name = 'NUM_LANCAMENTO';
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Código do produto', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'MOVIMENTO_MANUAL',
+	@level2type = N'Column', @level2name = 'COD_PRODUTO';
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Código COSIF Analítico', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'MOVIMENTO_MANUAL',
+	@level2type = N'Column', @level2name = 'COD_COSIF';
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Valor do movimento', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'MOVIMENTO_MANUAL',
+	@level2type = N'Column', @level2name = 'VAL_VALOR';
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Descrição do lançamento', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'MOVIMENTO_MANUAL',
+	@level2type = N'Column', @level2name = 'DES_DESCRICAO';
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Data de atualização do registro', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'MOVIMENTO_MANUAL',
+	@level2type = N'Column', @level2name = 'DAT_MOVIMENTO';
+
+EXEC sp_addextendedproperty 
+	@name = N'MS_Description', 
+	@value = N'Código do usuário que fez o movimento', 
+	@level0type = N'Schema', @level0name = 'dbo',
+	@level1type = N'Table',  @level1name = 'MOVIMENTO_MANUAL',
+	@level2type = N'Column', @level2name = 'COD_USUARIO';
+GO
+
+/*** Fim Tables ***/
+
+/*** Inserts ***/
+
+INSERT INTO dbo.PRODUTO (COD_PRODUTO, DES_PRODUTO, STA_STATUS)
+VALUES
+    ('0001', 'Produtos Financeiros', 'A'),
+    ('0002', 'Investimentos', 'A'),
+    ('0003', 'Seguros', 'A'),
+    ('0004', 'Serviços Bancários', 'A');
+GO
+
+
+INSERT INTO dbo.PRODUTO_COSIF 
+    (COD_PRODUTO, COD_COSIF, COD_CLASSIFICACAO, STA_STATUS)
+VALUES
+    -- Produto 0001: Produtos Financeiros
+    ('0001', '11200002', '110001', 'A'),
+    ('0001', '11200003', '110002', 'A'),
+    ('0001', '11200004', '110003', 'A'),
+
+    -- Produto 0002: Investimentos
+    ('0002', '12100001', '120001', 'A'),
+    ('0002', '12100002', '120002', 'A'),
+    ('0002', '12100003', '120003', 'A'),
+
+    -- Produto 0003: Seguros
+    ('0003', '13100001', '130001', 'A'),
+    ('0003', '13100002', '130002', 'A'),
+    ('0003', '13100003', '130003', 'A'),
+
+    -- Produto 0004: Serviços Bancários
+    ('0004', '14100001', '140001', 'A'),
+    ('0004', '14100002', '140002', 'A'),
+    ('0004', '14100003', '140003', 'A');
+GO
+
+
+/*** fim Inserts ***/
+
+
+/*** Procedures ***/
+
+CREATE OR ALTER PROCEDURE [dbo].[sp_ObterProdutos]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        COD_PRODUTO,
+        DES_PRODUTO,
+        STA_STATUS
+    FROM dbo.PRODUTO
+    ORDER BY COD_PRODUTO;
+END;
+GO
+
+
+CREATE OR ALTER PROCEDURE [dbo].[sp_ObterCosifs]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        COD_PRODUTO,
+        COD_COSIF,
+		COD_CLASSIFICACAO,
+        STA_STATUS
+    FROM dbo.PRODUTO_COSIF
+    ORDER BY COD_COSIF;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[sp_ObterMovimentos]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        MM.DAT_MES AS Mes,
+        MM.DAT_ANO AS Ano,
+        P.COD_PRODUTO AS CodigoProduto,
+        P.DES_PRODUTO AS DescricaoProduto,
+        MM.NUM_LANCAMENTO AS NumeroLancamento,
+        MM.DES_DESCRICAO AS Descricao,
+        MM.VAL_VALOR AS Valor
+    FROM dbo.MOVIMENTO_MANUAL MM
+    INNER JOIN dbo.PRODUTO P 
+        ON P.COD_PRODUTO = MM.COD_PRODUTO
+    ORDER BY 
+        MM.DAT_MES,
+        MM.DAT_ANO,
+        MM.NUM_LANCAMENTO;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[sp_InserirMovimentoManual]
+(
+    @DAT_MES        INT,
+    @DAT_ANO        INT,
+    @COD_PRODUTO    CHAR(4),
+    @COD_COSIF      CHAR(11),
+    @DES_DESCRICAO  VARCHAR(50),
+    @DAT_MOVIMENTO  SMALLDATETIME,
+    @COD_USUARIO    VARCHAR(15),
+    @VAL_VALOR      NUMERIC(18,2)
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @NUM_LANCAMENTO INT;
+
+    -- Buscar o último número de lançamento para o mês/ano
+    SELECT @NUM_LANCAMENTO = ISNULL(MAX(NUM_LANCAMENTO), 0) + 1
+    FROM MOVIMENTO_MANUAL
+    WHERE DAT_MES = @DAT_MES
+      AND DAT_ANO = @DAT_ANO;
+
+    -- Inserir o registro
+    INSERT INTO MOVIMENTO_MANUAL
+    (
+        DAT_MES,
+        DAT_ANO,
+        NUM_LANCAMENTO,
+        COD_PRODUTO,
+        COD_COSIF,
+        DES_DESCRICAO,
+        DAT_MOVIMENTO,
+        COD_USUARIO,
+        VAL_VALOR
+    )
+    VALUES
+    (
+        @DAT_MES,
+        @DAT_ANO,
+        @NUM_LANCAMENTO,
+        @COD_PRODUTO,
+        @COD_COSIF,
+        @DES_DESCRICAO,
+        @DAT_MOVIMENTO,
+        @COD_USUARIO,
+        @VAL_VALOR
+    );
+
+    -- Retornar o número do lançamento gerado
+    SELECT @NUM_LANCAMENTO AS NUM_LANCAMENTO_GERADO;
+END;
+GO
+
+/*** fim Procedures ***/
+
+
+
+
+
